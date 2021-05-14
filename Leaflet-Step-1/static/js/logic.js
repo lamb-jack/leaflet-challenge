@@ -1,8 +1,8 @@
 //Creating Map
 
 let myMap = L.map("map", {
-  center: [40.871960, -102.817644],
-  zoom: 5
+  center: [10.873705, -93.434368],
+  zoom: 4
 });
 
 L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
@@ -17,7 +17,6 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 // Store our API endpoint as queryUrl
 let url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson";
 
-// Perform a GET request to the query URL
 d3.json(url).then(function(data) {
   console.log(data.features);
 
@@ -46,34 +45,20 @@ d3.json(url).then(function(data) {
       color = "#ff5f65";      
     }
 
-    let size = 0;
-
-    if (magnitude >= 0 && magnitude <= 3.9){
-      size = 30000;
-    } else if (magnitude >= 4 && magnitude <= 4.9){
-      size = 40000;
-    } else if (magnitude >= 5 && magnitude <= 5.9){
-      size = 45000;
-    } else if (magnitude >= 6 && magnitude <= 6.9){
-      size = 50000;
-    } else if (magnitude >= 7 && magnitude <= 7.9){
-      size = 65000;
-    } else {
-      size = 70000;
-    }
-
-    
-
-    L.circle([lat, long], {
+    let circles = L.circle([lat, long], {
       weight: 1,
       opacity: 0.5,
       color: "grey",
       fillColor: color,
       fillOpacity: 0.6,
-      radius: size
+      radius: (Math.exp(magnitude))*1000
     }).addTo(myMap);
 
+    // Popups
+    circles.bindPopup(`Place: ${d.properties.place} <br> Magnitude: ${magnitude} <br> Depth: ${depth}`);
+
   })
+
   
 
 });
