@@ -62,3 +62,48 @@ d3.json(url).then(function(data) {
   
 
 });
+
+function getColor(d) {
+  return d > 90  ? '#ff5f65' :
+         d > 70  ? '#fca45c' :
+         d > 50   ? '#fdb729' :
+         d > 30   ? '#f7db0f' :
+         d > 10   ? '#dcf400' :
+                    '#a3f700';
+}
+
+let info = L.control();
+
+info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+    this.update();
+    return this._div;
+};
+
+// method that we will use to update the control based on feature properties passed
+info.update = function (props) {
+    this._div.innerHTML = '<h4>All Earthquakes from the Past 30 Days</h4>';
+};
+
+info.addTo(myMap);
+
+
+
+let legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function (map) {
+
+    let div = L.DomUtil.create('div', 'info legend'),
+        grades = [-10, 10, 30, 50, 70, 90];
+
+    // loop through our density intervals and generate a label with a colored square for each interval
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+    }
+
+    return div;
+};
+
+legend.addTo(myMap);
